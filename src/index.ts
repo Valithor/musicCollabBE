@@ -25,27 +25,23 @@ import { createUserRoomLoader } from './utils/createUserRoomLoader';
 import path from 'path';
 import { createRefreshToken, createAccessToken } from './utils/auth';
 import { sendRefreshToken } from './utils/sendRefreshToken';
-// import * as PostgressConnectionStringParser from 'pg-connection-string';
-// import dotenv from 'dotenv';
-// const config = dotenv.config();
 
 require('dotenv').config({path: __dirname + '/.env'})
 
 const main = async () => {
-  // const connectionOptions = PostgressConnectionStringParser.parse(process.env.DATABASE_URL as string)
   
-  await createConnection({
+  const conn = await createConnection({
     type: 'postgres',
     url: process.env.DATABASE_URL,    
     logging: true,
     synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Room, User, UserRoom, Sound, RoomSound],
-    // ssl: {
-    //   rejectUnauthorized: false
-    // }
+    ssl: {
+      rejectUnauthorized: false
+    }
   });
-  // await conn.runMigrations();
+  await conn.runMigrations();
 
   const app = express();
 
@@ -54,7 +50,7 @@ const main = async () => {
   const redis = new Redis(process.env.REDIS_URL);
   app.use(
     cors({
-      origin: [process.env.CORS_ORIGIN, "http://83.24.54.164:3000"],
+      origin: [process.env.CORS_ORIGIN],
       credentials: true,
     })
   )
