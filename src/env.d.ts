@@ -5,5 +5,7 @@ declare namespace NodeJS {
     PORT: string;
     SESSION_SECRET: string;
     CORS_ORIGIN: string;
+    ACCESS_TOKEN_SECRET: string;
+    REFRESH_TOKEN_SECRET: string;
   }
 }

@@ -12,8 +12,7 @@
     "start": "node dist/index.js -p $PORT",
     "start2": "ts-node src/index.ts",
     "dev2": "nodemon --exec ts-node src/index.ts",
-    "deploy": "git add . && git commit -m Heroku && git push heroku master",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false && npm install --prefix client && npm run build --prefix client"
+    "deploy": "git add . && git commit -m Heroku && git push heroku master"
   },
   "author": "Valithor",
   "license": "ISC",
