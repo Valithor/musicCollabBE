@@ -37,9 +37,9 @@ const main = async () => {
     synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Room, User, UserRoom, Sound, RoomSound],
-    ssl: {
-      rejectUnauthorized: false
-    }
+    // ssl: {
+    //   rejectUnauthorized: false
+    // }
   });
   // await conn.runMigrations();
 
