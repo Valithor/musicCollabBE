@@ -1,6 +1,6 @@
-import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver, UseMiddleware } from "type-graphql";
+import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver } from "type-graphql";
 import { MyContext } from "../types";
-import { isAuth } from "../middleware/isAuth";
+// import { isAuth } from "../middleware/isAuth";
 import { Sound } from "../entities/Sound";
 
 @ObjectType()
@@ -24,7 +24,7 @@ export class SoundResolver {
     }
 
     @Mutation(() => Sound)
-    @UseMiddleware(isAuth)
+    // @UseMiddleware(isAuth)
     async createSound(
         @Arg('input') input: string,
         @Ctx() { req }: MyContext
