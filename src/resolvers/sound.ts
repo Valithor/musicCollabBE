@@ -35,4 +35,15 @@ export class SoundResolver {
             creatorId: userId,
         }).save();
     }
+    @Mutation(() => Boolean)
+    async deleteSound(
+        @Arg('id') id: number,
+    ): Promise<boolean> {
+        try {
+            await Sound.delete(id);
+        } catch {
+            return false;
+        }
+        return true;
+    }
 }
