@@ -12,7 +12,7 @@ import session from 'express-session';
 import connectRedis from 'connect-redis';
 import cors from 'cors';
 import cookieParser from "cookie-parser";
-import { verify } from "jsonwebtoken";
+// import { verify } from "jsonwebtoken";
 import { createConnection } from 'typeorm';
 import { Room } from './entities/Room';
 import { User } from './entities/User';
@@ -23,7 +23,7 @@ import { SoundResolver } from './resolvers/sound';
 import { createUserLoader } from './utils/createUserLoader';
 import { createUserRoomLoader } from './utils/createUserRoomLoader';
 import path from 'path';
-import { createRefreshToken, createAccessToken } from './utils/auth';
+// import { createRefreshToken, createAccessToken } from './utils/auth';
 // import { sendRefreshToken } from './utils/sendRefreshToken';
 
 require('dotenv').config({path: __dirname + '/.env'})

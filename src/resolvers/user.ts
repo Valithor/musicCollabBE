@@ -9,7 +9,7 @@ import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid";
 import { getConnection } from "typeorm";
 import { hash, compare } from "bcryptjs";
-import { createRefreshToken, createAccessToken } from "../utils/auth";
+import { createAccessToken } from "../utils/auth";
 // import { sendRefreshToken } from "../utils/sendRefreshToken";
 import { verify } from "jsonwebtoken";
 
@@ -153,7 +153,7 @@ export class UserResolver {
     @Mutation(() => LoginResponse)
     async register(
         @Arg('options') options: UsernamePasswordInput,
-        @Ctx() { res }: MyContext
+        @Ctx() {  }: MyContext
     ): Promise<LoginResponse> {
         const errors = validateRegister(options);
         if (errors) {
@@ -200,7 +200,7 @@ export class UserResolver {
     async login(
         @Arg('usernameOrEmail') usernameOrEmail: string,
         @Arg('password') password: string,
-        @Ctx() { res }: MyContext
+        @Ctx() {  }: MyContext
     ): Promise<LoginResponse> {
         const user = await User.findOne(
             usernameOrEmail.includes('@')
@@ -237,7 +237,7 @@ export class UserResolver {
     }
 
     @Mutation(() => Boolean)
-    async logout(@Ctx() { res }: MyContext) {
+    async logout(@Ctx() {  }: MyContext) {
         // sendRefreshToken(res, "");
 
         return true;
