@@ -29,9 +29,10 @@ export class SoundResolver {
         @Arg('input') input: string,
         @Ctx() { req }: MyContext
     ): Promise<Sound> {
+        const userId = req.session.userId? req.session.userId:1;
         return await Sound.create({
             path: input,
-            creatorId: req.session.userId,
+            creatorId: userId,
         }).save();
     }
 }
