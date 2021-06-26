@@ -132,8 +132,8 @@ export class UserResolver {
     }
 
     @Query(() => User, { nullable: true })
-    me(@Ctx() context: MyContext) {
-        const authorization = context.req.headers["authorization"];
+    me(@Ctx() {req}: MyContext) {
+        const authorization = req.headers["authorization"];
 
         if (!authorization) {
             return null;

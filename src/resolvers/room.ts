@@ -7,6 +7,7 @@ import { UserRoom } from "../entities/UserRoom";
 import { User } from "../entities/User";
 import { RoomSound } from "../entities/RoomSound";
 import FfmpegCommand from 'fluent-ffmpeg';
+import { verify } from "jsonwebtoken";
 
 @ObjectType()
 class PaginatedRooms {
@@ -127,9 +128,8 @@ export class RoomResolver {
     @Query(() => Room, { nullable: true })
     async room(
         @Arg('id', () => Int) id: number,
-        @Ctx() { req }: MyContext
+        @Ctx() { }: MyContext
     ): Promise<Room | undefined> {
-        console.log(req.headers)
         const repo = await getConnection().getRepository(Room);
         const room = await repo.findOne(id, { relations: ["roomSounds"] });
         return room;
@@ -138,8 +138,13 @@ export class RoomResolver {
     @UseMiddleware(isAuth)
     async createRoom(
         @Arg('input') input: string,
-        @Ctx() { payload }: MyContext
+        @Ctx() { req }: MyContext
     ): Promise<Room> {
+        
+        const authorization = req!.headers["authorization"];
+        const token = authorization!.split(" ")[1];
+        const payload: any = verify(token, process.env.ACCESS_TOKEN_SECRET!);
+
         const userId = payload!.userId;
         const room = await Room.create({
             name: input,
@@ -209,7 +214,7 @@ export class RoomResolver {
     async concat(
         @Arg('roomId', () => Int) roomId: number,
         @PubSub("ROOMS") publish: Publisher<Room>
-    ): Promise<Boolean> {          
+    ): Promise<Boolean> {
         const roomSounds = await RoomSound.find({ roomId });
         const room = await Room.findOne(roomId, { relations: ["roomSounds"] });
         roomSounds.forEach(rs => {
