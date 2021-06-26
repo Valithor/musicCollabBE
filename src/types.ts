@@ -7,7 +7,7 @@ import { createUserRoomLoader } from './utils/createUserRoomLoader';
 export type MyContext = {
     req: Request &  { session?: Session & { userId?: number } };
     redis: Redis;
-    payload?: { userId: string };
+    payload?: { userId: number };
     res: Response;
     userLoader: ReturnType<typeof createUserLoader>;
     userRoomLoader: ReturnType<typeof createUserRoomLoader>;

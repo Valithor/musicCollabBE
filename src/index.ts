@@ -24,7 +24,7 @@ import { createUserLoader } from './utils/createUserLoader';
 import { createUserRoomLoader } from './utils/createUserRoomLoader';
 import path from 'path';
 import { createRefreshToken, createAccessToken } from './utils/auth';
-import { sendRefreshToken } from './utils/sendRefreshToken';
+// import { sendRefreshToken } from './utils/sendRefreshToken';
 
 require('dotenv').config({path: __dirname + '/.env'})
 
@@ -37,9 +37,9 @@ const main = async () => {
     synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Room, User, UserRoom, Sound, RoomSound],
-    ssl: {
-      rejectUnauthorized: false
-    }
+    // ssl: {
+    //   rejectUnauthorized: false
+    // }
   });
   // await conn.runMigrations();
 
@@ -50,41 +50,41 @@ const main = async () => {
   const redis = new Redis(process.env.REDIS_URL);
   app.use(
     cors({
-      origin: [process.env.CORS_ORIGIN],
+      origin: [process.env.CORS_ORIGIN, "http://79.191.80.115:3000"],
       credentials: true,
     })
   )
   app.use(cookieParser());
-  app.post("/refresh_token", async (req, res) => {
-    const token = req.cookies.jid;
-    if (!token) {
-      return res.send({ ok: false, accessToken: "" });
-    }
+  // app.post("/refresh_token", async (req, res) => {
+  //   const token = req.cookies.jid;
+  //   if (!token) {
+  //     return res.send({ ok: false, accessToken: "" });
+  //   }
 
-    let payload: any = null;
-    try {
-      payload = verify(token, process.env.REFRESH_TOKEN_SECRET!);
-    } catch (err) {
-      console.log(err);
-      return res.send({ ok: false, accessToken: "" });
-    }
+  //   let payload: any = null;
+  //   try {
+  //     payload = verify(token, process.env.REFRESH_TOKEN_SECRET!);
+  //   } catch (err) {
+  //     console.log(err);
+  //     return res.send({ ok: false, accessToken: "" });
+  //   }
 
-    // token is valid and
-    // we can send back an access token
-    const user = await User.findOne({ id: payload.userId });
+  //   // token is valid and
+  //   // we can send back an access token
+  //   const user = await User.findOne({ id: payload.userId });
 
-    if (!user) {
-      return res.send({ ok: false, accessToken: "" });
-    }
+  //   if (!user) {
+  //     return res.send({ ok: false, accessToken: "" });
+  //   }
 
-    if (user.tokenVersion !== payload.tokenVersion) {
-      return res.send({ ok: false, accessToken: "" });
-    }
+  //   if (user.tokenVersion !== payload.tokenVersion) {
+  //     return res.send({ ok: false, accessToken: "" });
+  //   }
 
-    sendRefreshToken(res, createRefreshToken(user));
+  //   sendRefreshToken(res, createRefreshToken(user));
 
-    return res.send({ ok: true, accessToken: createAccessToken(user) });
-  });
+  //   return res.send({ ok: true, accessToken: createAccessToken(user) });
+  // });
 
 
   app.use(

@@ -127,8 +127,9 @@ export class RoomResolver {
     @Query(() => Room, { nullable: true })
     async room(
         @Arg('id', () => Int) id: number,
-        // @Ctx() { req }: MyContext
+        @Ctx() { req }: MyContext
     ): Promise<Room | undefined> {
+        console.log(req.headers)
         const repo = await getConnection().getRepository(Room);
         const room = await repo.findOne(id, { relations: ["roomSounds"] });
         return room;
@@ -137,9 +138,9 @@ export class RoomResolver {
     @UseMiddleware(isAuth)
     async createRoom(
         @Arg('input') input: string,
-        @Ctx() { req }: MyContext
+        @Ctx() { payload }: MyContext
     ): Promise<Room> {
-        const userId = req.session.userId;
+        const userId = payload!.userId;
         const room = await Room.create({
             name: input,
             creatorId: userId,

@@ -10,7 +10,7 @@ import { v4 } from "uuid";
 import { getConnection } from "typeorm";
 import { hash, compare } from "bcryptjs";
 import { createRefreshToken, createAccessToken } from "../utils/auth";
-import { sendRefreshToken } from "../utils/sendRefreshToken";
+// import { sendRefreshToken } from "../utils/sendRefreshToken";
 import { verify } from "jsonwebtoken";
 
 
@@ -33,7 +33,7 @@ class UserResponse {
 class LoginResponse {
     @Field(() => [FieldError], { nullable: true })
     errors?: FieldError[];
-    @Field(()=> String, { nullable: true })
+    @Field(() => String, { nullable: true })
     accessToken?: string;
     @Field(() => User, { nullable: true })
     user?: User;
@@ -45,7 +45,7 @@ export class UserResolver {
     email(@Root() user: User,
         @Ctx() { payload }: MyContext
     ) {
-        if (payload?.userId === user.id as unknown as string) {
+        if (payload?.userId === user.id) {
             return user.email;
         }
         return "";
@@ -188,7 +188,7 @@ export class UserResolver {
             }
 
         }
-        sendRefreshToken(res, createRefreshToken(user));
+        // sendRefreshToken(res, createRefreshToken(user));
 
         return {
             accessToken: createAccessToken(user),
@@ -228,7 +228,7 @@ export class UserResolver {
                 ],
             };
         }
-        sendRefreshToken(res, createRefreshToken(user));
+        // sendRefreshToken(res, createRefreshToken(user));
 
         return {
             accessToken: createAccessToken(user),
@@ -238,7 +238,7 @@ export class UserResolver {
 
     @Mutation(() => Boolean)
     async logout(@Ctx() { res }: MyContext) {
-        sendRefreshToken(res, "");
+        // sendRefreshToken(res, "");
 
         return true;
     }
@@ -257,16 +257,27 @@ export class UserResolver {
         @PubSub("USERS") publish: Publisher<User>,
         @Ctx() { req }: MyContext
     ) {
-        if (req.session.userId === undefined)
-            return false;
-        const userId = req.session.userId;
-        const user = await User.findOne(userId);
-        if (user) {
-            user.location = location;
-            await user.save();
-            await publish(user);
+        const authorization = req.headers["authorization"];
+
+        if (!authorization) {
+            return null;
         }
-        return true;
+
+        try {
+            const token = authorization.split(" ")[1];
+            const payload: any = verify(token, process.env.ACCESS_TOKEN_SECRET!);
+            const user = await User.findOne(payload.userId);
+            if (user) {
+                user.location = location;
+                await user.save();
+                await publish(user);
+            }
+            return true;
+        } catch (err) {
+            console.log(err);
+            return null;
+        }
+
     }
     @Subscription({
         topics: "USERS",
